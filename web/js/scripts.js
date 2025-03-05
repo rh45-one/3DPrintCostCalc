@@ -163,6 +163,9 @@ document.getElementById('import-settings-btn').addEventListener('click', () => {
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = '.txt';
+  fileInput.style.display = 'none';
+  document.body.appendChild(fileInput);
+
   fileInput.onchange = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -182,7 +185,9 @@ document.getElementById('import-settings-btn').addEventListener('click', () => {
       });
       alert('Settings imported successfully.');
     }
+    document.body.removeChild(fileInput);
   };
+
   fileInput.click();
 });
 
@@ -193,6 +198,9 @@ document.getElementById('export-settings-btn').addEventListener('click', () => {
   const a = document.createElement('a');
   a.href = url;
   a.download = 'settings.txt';
+  a.style.display = 'none';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
