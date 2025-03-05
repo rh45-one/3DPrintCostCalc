@@ -62,7 +62,11 @@ This application is divided into three main packages, each serving a specific ro
    java -jar 3DPrintCostCalc.jar
    ```
 
+## Continuous Integration
+A GitHub Actions workflow (located in `.github/workflows/makefile.yml`) runs automatically on each push or pull request to the `main` branch. It checks out the code, installs Java, and executes the Make targets (compile, doc, jar) to verify everything builds successfully.
+
 ## Future Enhancements
+* **Web Version:** Creation of a web-based fork of the project.
 * **GUI Implementation:** Add a graphical interface for easier navigation.  
 * **Additional Cost Factors:** Integrate advanced maintenance or labor costs as needed.
 
