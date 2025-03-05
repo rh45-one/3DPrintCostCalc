@@ -87,7 +87,8 @@ A GitHub Actions workflow (located in `.github/workflows/makefile.yml`) runs aut
 Additionally, another GitHub Actions workflow (located in `.github/workflows/static.yml`) is set up to build and deploy the web-based GUI of the project. This workflow ensures that the web version is always up-to-date and available.
 ## Future Enhancements
 * ~~**Web Version:** Creation of a web-based GUI of the project.~~ ✔️
-* **Import/Export Settings: Allows saving/loading configurations to/from a file.
+* **Import/Export Settings:** Allows saving/loading configurations to/from a file.
+* **Improve Mobile Interface:** Enhance the web version for better mobile compatibility.
 * **Additional Cost Factors:** Integrate advanced maintenance or labor costs as needed.
 
 
