@@ -31,6 +31,8 @@ The web-based GUI of the project is available at [https://rh45-one.github.io/3DP
 ├── web/
 │   ├── css/
 │   │   └── styles.css
+│   ├── img/
+│   │   └── ...
 │   ├── js/
 │   │   └── scripts.js
 │   ├── docs/
