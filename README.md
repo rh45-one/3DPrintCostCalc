@@ -11,17 +11,27 @@ This Java CLI-based application helps estimate 3D printing costs by considering 
 ## Project Structure
 ```
 3DPrintCostCalc/
-├── bin/
-├── docs/
+├── .github/
+│   └── workflows/
+│       ├── makefile.yml
+│       └── static.yml
 ├── src/
 │   ├── application/
 │   │   ├── PrintCostCalculator.java
-│   │   ├── Printer.java
+│   │   └── Printer.java
 │   ├── calculations/
 │   │   ├── CostCalculator.java
-│   │   ├── Optimizer.java
+│   │   └── Optimizer.java
 │   ├── main/
-│   │   ├── Application.java
+│   │   └── Application.java
+│   └── web/
+│       ├── css/
+│       │   └── styles.css
+│       ├── js/
+│       │   └── scripts.js
+│       └── index.html
+├── 3DPrintCostCalc.jar
+├── Makefile
 ```
 
 ## How It Works
