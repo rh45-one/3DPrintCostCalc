@@ -1,0 +1,19 @@
+name: Makefile CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Java
+        run: sudo apt-get update && sudo apt-get install -y default-jdk
+
+      - name: Build (compile, doc, jar)
+        run: make compile doc jar
