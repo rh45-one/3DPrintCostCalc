@@ -48,19 +48,34 @@ function calculateMaterialCost(totalUnits, materialPerUnit, materialCostPerKg, h
 }
 
 function optimizeDistribution(totalUnits, printerArray) {
-  // Sort printers by lowest power usage first
-  printerArray.sort((a, b) => a.powerConsumption - b.powerConsumption);
+  // Track assigned units and completion times per printer
+  const distribution = {};
+  const completionTimes = new Map();
 
-  let distribution = {};
-  let remaining = totalUnits;
-  while (remaining > 0) {
-    for (let p of printerArray) {
-      if (remaining <= 0) break;
-      const assign = Math.min(remaining, p.bedCapacity);
-      distribution[p.nickname] = (distribution[p.nickname] || 0) + assign;
-      remaining -= assign;
-    }
+  printerArray.forEach(p => {
+    distribution[p.nickname] = 0;
+    completionTimes.set(p, 0);
+  });
+
+  for (let i = 0; i < totalUnits; i++) {
+    let bestPrinter = null;
+    let bestTime = Infinity;
+
+    // Find printer that would complete this unit earliest
+    printerArray.forEach(p => {
+      const assigned = distribution[p.nickname] + 1;
+      const batchesNeeded = Math.ceil(assigned / p.bedCapacity);
+      const newCompletion = batchesNeeded * p.printTimePerUnit;
+
+      if (newCompletion < bestTime) {
+        bestTime = newCompletion;
+        bestPrinter = p;
+      }
+    });
+
+    distribution[bestPrinter.nickname]++;
   }
+
   return distribution;
 }
 
