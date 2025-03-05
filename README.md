@@ -15,6 +15,8 @@ This Java CLI-based application helps estimate 3D printing costs by considering 
 │   └── workflows/
 │       ├── makefile.yml
 │       └── static.yml
+├── bin/
+│   └── ...
 ├── src/
 │   ├── application/
 │   │   ├── PrintCostCalculator.java
@@ -22,14 +24,17 @@ This Java CLI-based application helps estimate 3D printing costs by considering 
 │   ├── calculations/
 │   │   ├── CostCalculator.java
 │   │   └── Optimizer.java
-│   ├── main/
-│   │   └── Application.java
-│   └── web/
-│       ├── css/
-│       │   └── styles.css
-│       ├── js/
-│       │   └── scripts.js
-│       └── index.html
+│   └──  main/
+│       └── Application.java
+├── web/
+│   ├── css/
+│   │   └── styles.css
+│   ├── js/
+│   │   └── scripts.js
+│   ├── docs/
+│   │   ├── ...
+│   │   └── index.html
+│   └── index.html
 ├── 3DPrintCostCalc.jar
 ├── Makefile
 ```
