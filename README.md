@@ -7,7 +7,7 @@ The web-based GUI of the project is available at [https://rh45-one.github.io/3DP
 
 ## Objectives & Purpose
 * Simplify cost estimation for 3D printing tasks.  
-* Provide a quick, interactive console interface to manage printers and printing parameters.  
+* Provide a quick, interactive console/web interface to manage printers and printing parameters.  
 * Enable more accurate planning and budgeting for 3D printing projects.
 
 ## Project Structure
@@ -43,27 +43,27 @@ The web-based GUI of the project is available at [https://rh45-one.github.io/3DP
 ├── Makefile
 ```
 
-## How It Works
+## How It Works (CLI Ver.)
 1. **User Input:** Prompts for material/energy cost, number of units, and printer settings.  
 2. **Printer Management:** Allows adding, listing, and removing printers.  
 3. **Calculation Core:** Uses classes in `calculations` to compute total material cost, energy cost, and commissions.  
 4. **Distribution Optimization:** Optimally allocates units to printers for minimal cost.  
 5. **Export/Import:** Saves or loads current settings from a file.
 
-## Application Flow
+## Application Flow (CLI Ver.)
 1. **Start:** Run the CLI and display a menu.  
 2. **Configuration Menu:** Set overall printing parameters (discounts, material cost, etc.).  
 3. **Printer Menu:** Add or remove printers.  
 4. **Calculation:** Trigger calculations for total cost, including commission.  
 5. **Data Persistence:** Optionally export or import configurations.
 
-## Architecture
+## Architecture (CLI Ver.)
 This application is divided into three main packages, each serving a specific role:
 * **main** – Contains the entry point and overall program launch.  
 * **application** – Houses the CLI-based interface for user interactions (e.g., adding printers, importing/exporting settings).  
 * **calculations** – Provides cost computations, energy usage calculations, and distribution optimization.
 
-## Building & Usage
+## Building & Usage (CLI Ver.)
 1. **Compile:**  
    ```bash
    make compile
