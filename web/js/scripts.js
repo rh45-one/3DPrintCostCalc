@@ -48,43 +48,59 @@ function calculateMaterialCost(totalUnits, materialPerUnit, materialCostPerKg, h
 }
 
 function optimizeDistribution(totalUnits, printerArray) {
-  // Track assigned units and completion times per printer
-  const distribution = {};
-  const completionTimes = new Map();
+  const distribution = new Map();
+  const completionTimes = new Map(); // Tracks batch-based completion times
 
-  printerArray.forEach(p => {
-    distribution[p.nickname] = 0;
-    completionTimes.set(p, 0);
+  // Initialize tracking structures
+  printerArray.forEach(printer => {
+    distribution.set(printer, 0);
+    completionTimes.set(printer, 0);
   });
 
   for (let i = 0; i < totalUnits; i++) {
     let bestPrinter = null;
     let bestTime = Infinity;
 
-    // Find printer that would complete this unit earliest
-    printerArray.forEach(p => {
-      const assigned = distribution[p.nickname] + 1;
-      const batchesNeeded = Math.ceil(assigned / p.bedCapacity);
-      const newCompletion = batchesNeeded * p.printTimePerUnit;
+    // Find best printer for current unit
+    printerArray.forEach(printer => {
+      const currentAssigned = distribution.get(printer);
+      const newAssigned = currentAssigned + 1;
+      
+      // Calculate hypothetical completion time if we add this unit
+      const batchesNeeded = Math.ceil(newAssigned / printer.bedCapacity);
+      const newCompletion = batchesNeeded * printer.printTimePerUnit;
 
       if (newCompletion < bestTime) {
         bestTime = newCompletion;
-        bestPrinter = p;
+        bestPrinter = printer;
       }
     });
 
-    distribution[bestPrinter.nickname]++;
+    if (!bestPrinter) break; // Safety check
+
+    // Update distribution and completion time
+    distribution.set(bestPrinter, distribution.get(bestPrinter) + 1);
+    const updatedAssigned = distribution.get(bestPrinter);
+    const updatedBatches = Math.ceil(updatedAssigned / bestPrinter.bedCapacity);
+    completionTimes.set(bestPrinter, updatedBatches * bestPrinter.printTimePerUnit);
   }
 
-  return distribution;
+  // Convert to nickname-based object
+  const result = {};
+  distribution.forEach((units, printer) => {
+    result[printer.nickname] = units;
+  });
+  
+  return result;
 }
 
 function calculateEnergyCost(distribution, energyCostPerKwh) {
   let total = 0;
-  for (const p of printers) {
-    const assigned = distribution[p.nickname] || 0;
-    const printerTime = assigned * p.printTimePerUnit;
-    total += printerTime * p.powerConsumption * energyCostPerKwh;
+  for (const printerNickname in distribution) {
+    const printer = printers.find(p => p.nickname === printerNickname);
+    const units = distribution[printerNickname];
+    const printerTime = units * printer.printTimePerUnit;
+    total += printerTime * printer.powerConsumption * energyCostPerKwh;
   }
   return total;
 }
@@ -127,9 +143,9 @@ document.getElementById('cost-form').addEventListener('submit', (event) => {
 
   // 3) Display distribution and results
   let distInfo = '';
-  Object.keys(distribution).forEach(nick => {
-    distInfo += `<li>${nick}: ${distribution[nick]} unit(s)</li>`;
-  });
+  for (const printerNickname in distribution) {
+    distInfo += `<li>${printerNickname}: ${distribution[printerNickname]} unit(s)</li>`;
+  }
 
   document.getElementById('result').innerHTML = `
     <hr>
@@ -140,4 +156,43 @@ document.getElementById('cost-form').addEventListener('submit', (event) => {
     <p><strong>Total Cost:</strong> $${totalCost.toFixed(2)}</p>
     <p><strong>Total with Commission:</strong> $${totalWithCommission.toFixed(2)}</p>
   `;
+});
+
+// Import/Export Settings
+document.getElementById('import-settings-btn').addEventListener('click', () => {
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = '.txt';
+  fileInput.onchange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const text = await file.text();
+      const lines = text.split('\n');
+      printers.length = 0; // Clear existing printers
+      lines.forEach(line => {
+        const parts = line.split(',');
+        if (parts.length === 5) {
+          const nickname = parts[0];
+          const powerConsumption = parseFloat(parts[1]);
+          const printTimePerUnit = parseFloat(parts[2]);
+          const nozzleSize = parseFloat(parts[3]);
+          const bedCapacity = parseInt(parts[4], 10);
+          printers.push({ nickname, powerConsumption, printTimePerUnit, nozzleSize, bedCapacity });
+        }
+      });
+      alert('Settings imported successfully.');
+    }
+  };
+  fileInput.click();
+});
+
+document.getElementById('export-settings-btn').addEventListener('click', () => {
+  const lines = printers.map(p => `${p.nickname},${p.powerConsumption},${p.printTimePerUnit},${p.nozzleSize},${p.bedCapacity}`);
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'settings.txt';
+  a.click();
+  URL.revokeObjectURL(url);
 });
