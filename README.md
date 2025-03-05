@@ -3,6 +3,8 @@
 ## Overview
 This Java CLI-based application helps estimate 3D printing costs by considering material usage, energy consumption, and optional commission. It allows users to set printing parameters, manage printers, calculate total costs, and export/import settings.
 
+The web-based GUI of the project is available at [https://rh45-one.github.io/3DPrintCostCalc/](https://rh45-one.github.io/3DPrintCostCalc/).
+
 ## Objectives & Purpose
 * Simplify cost estimation for 3D printing tasks.  
 * Provide a quick, interactive console interface to manage printers and printing parameters.  
@@ -80,6 +82,7 @@ This application is divided into three main packages, each serving a specific ro
 ## Continuous Integration
 A GitHub Actions workflow (located in `.github/workflows/makefile.yml`) runs automatically on each push or pull request to the `main` branch. It checks out the code, installs Java, and executes the Make targets (compile, doc, jar) to verify everything builds successfully.
 
+Additionally, another GitHub Actions workflow (located in `.github/workflows/static.yml`) is set up to build and deploy the web-based GUI of the project. This workflow ensures that the web version is always up-to-date and available.
 ## Future Enhancements
 * ~~**Web Version:** Creation of a web-based GUI of the project.~~ ✔️
 * **Additional Cost Factors:** Integrate advanced maintenance or labor costs as needed.
