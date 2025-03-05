@@ -2,7 +2,6 @@ package application;
 
 import calculations.CostCalculator;
 import calculations.Optimizer;
-
 import java.io.*;
 import java.util.*;
 
@@ -126,7 +125,7 @@ public class PrintCostCalculator {
             System.out.println("No printers available.");
         } else {
             for (Printer printer : printers) {
-                System.out.println(printer.getNickname());
+                System.out.println(printer.getNickname() + " | " + printer.getPowerConsumption() + " kWh/h | " + printer.getPrintTimePerUnit() + "h/unit | " + printer.getNozzleSize() + "mm | " + printer.getBedCapacity() + " units/batch");
             }
         }
     }
