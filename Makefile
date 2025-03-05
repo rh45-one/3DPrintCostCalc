@@ -2,7 +2,7 @@ APP_NAME = 3DPrintCostCalc
 MAIN_CLASS = main.Application
 SRC_DIR = src
 BIN_DIR = bin
-DOCS_DIR = docs
+DOCS_DIR = web/docs
 JAR_FILE = $(APP_NAME).jar
 
 .PHONY: all compile doc jar clean
