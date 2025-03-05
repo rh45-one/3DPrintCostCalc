@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html class="dark-mode">
+<head>
+  <meta charset="UTF-8">
+  <title>3D Print Cost Calculator</title>
+  <!-- Load Google Material Icons (for dark_mode, sunny, and description icons) -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Icons"
+    rel="stylesheet"
+  />
+  <!-- Load Material Design Icons from Pictogrammers (for the GitHub icon) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css"
+  />
+  <!-- Favicon -->
+  <link
+    rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' height='48px' viewBox='0 -960 960 960' width='48px' fill='%23FFFF'><path d='M314-228h50v-88h88v-50h-88v-88h-50v88h-88v50h88v88Zm215-35h201v-49H529v49Zm0-107h201v-50H529v50Zm37-163 61-61 61 61 36-36-61-61 61-61-36-36-61 61-61-61-36 36 61 61-61 61 36 36Zm-325-72h196v-50H241v50Zm-61 485q-24 0-42-18t-18-42v-600q0-24 18-42t42-18h600q24 0 42 18t18 42v600q0 24-18 42t-42 18H180Zm0-60h600v-600H180v600Zm0-600v600-600Z'/></svg>"
+    type="image/svg+xml"
+  />
+  <style>
+    body {
+      margin: 20px;
+      font-family: Arial, sans-serif;
+      background: #333; /* Dark by default */
+      color: #eee;
+      position: relative; /* needed for absolute-positioned elements */
+    }
+    /* Header bar: toggle on the left, GitHub link on the right */
+    .header-bar {
+      display: flex;
+      justify-content: space-between; /* left and right alignment */
+      align-items: center;           /* vertical centering */
+      margin-bottom: 20px;
+    }
+    .github-profile, .code, .docs {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .github-profile .mdi, .code .material-icons, .docs .material-icons {
+      font-size: 24px;
+    }
+    h1, h2 {
+      margin-bottom: 10px;
+      color: inherit;
+    }
+    form {
+      background: #444;
+      border: 1px solid #555;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+    label {
+      display: inline-block;
+      width: 180px;
+      margin-bottom: 5px;
+    }
+    input[type="text"],
+    input[type="number"] {
+      width: 200px;
+      margin-bottom: 10px;
+      border-radius: 5px; /* Rounded edges */
+    }
+    button {
+      background-color: #007bff;
+      border: none;
+      color: #fff;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #printers-list, #result {
+      background: #444;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    hr {
+      border: none;
+      border-bottom: 1px solid #555;
+      margin: 20px 0;
+    }
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    ul li {
+      margin: 5px 0;
+    }
+
+    /* Toggle container for icons and switch */
+    .theme-switch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    .theme-switch .material-icons {
+      font-size: 24px;
+    }
+
+    /* Switch styling */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .switch input {
+      display: none;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #bbb;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #007bff;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Light mode (when .dark-mode NOT present) */
+    html:not(.dark-mode) body {
+      background: #f6f6f6;
+      color: #333;
+    }
+    html:not(.dark-mode) form {
+      background: #fff;
+      border: 1px solid #ccc;
+    }
+    html:not(.dark-mode) hr {
+      border-bottom-color: #ccc;
+    }
+    html:not(.dark-mode) #printers-list,
+    html:not(.dark-mode) #result {
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header bar with toggle on the left, GitHub link on the right -->
+  <div class="header-bar">
+    <!-- Left side: dark mode toggle -->
+    <div class="theme-switch">
+      <span class="material-icons">sunny</span>
+      <label class="switch">
+        <input type="checkbox" id="theme-checkbox" checked>
+        <span class="slider"></span>
+      </label>
+      <span class="material-icons">dark_mode</span>
+    </div>
+
+    <!-- Right side: GitHub links -->
+    <div class="github-links">
+      <a
+        href="https://github.com/rh45-one/3DPrintCostCalc"
+        class="code"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="material-icons">code</span>
+        <span>Source</span>
+      </a>
+      <a
+        href="docs/index.html"
+        class="docs"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="material-icons">description</span>
+        <span>Docs</span>
+      </a>
+      <a
+        href="https://github.com/rh45-one"
+        class="github-profile"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="mdi mdi-github"></span>
+        <span>rh45</span>
+      </a>
+    </div>
+  </div>
+
+  <h1>3D Print Cost Calculator</h1>
+
+  <!-- Section: Add/Remove Printers -->
+  <h2>Manage Printers</h2>
+  <form id="printer-form">
+    <label for="nickname">Printer Nickname:</label>
+    <input id="nickname" type="text" required><br>
+
+    <label for="powerConsumption">Power (kW):</label>
+    <input id="powerConsumption" type="number" min="0" step="0.01" value=""><br>
+
+    <label for="printTimePerUnit">Print Time/Unit (hours):</label>
+    <input id="printTimePerUnit" type="number" min="0" step="0.01" value=""><br>
+
+    <label for="nozzleSize">Nozzle Size (mm):</label>
+    <input id="nozzleSize" type="number" min="0" step="0.1" value=""><br>
+
+    <label for="bedCapacity">Bed Capacity (units):</label>
+    <input id="bedCapacity" type="number" min="1" value=""><br><br>
+
+    <button type="submit">Add Printer</button>
+  </form>
+
+  <button id="list-printers-btn">List Printers</button>
+  <div id="printers-list" style="margin-top: 10px;"></div>
+
+  <hr>
+
+  <!-- Section: Cost Calculation -->
+  <h2>Cost Calculation</h2>
+  <form id="cost-form">
+    <label for="units">Total Units:</label>
+    <input id="units" type="number" min="0"><br>
+
+    <label for="matPerUnit">Material Per Unit (grams):</label>
+    <input id="matPerUnit" type="number" min="0" step="0.01"><br>
+
+    <label for="matCostPerKg">Material Cost (per kg):</label>
+    <input id="matCostPerKg" type="number" min="0" step="0.01"><br>
+
+    <label for="hasDiscount">Has Discount?:</label>
+    <input id="hasDiscount" type="checkbox"><br>
+
+    <label for="discountRate">Discount Rate (0.1 = 10%):</label>
+    <input id="discountRate" type="number" min="0" max="1" step="0.01"><br>
+
+    <label for="energyCost">Energy Cost (per kWh):</label>
+    <input id="energyCost" type="number" min="0" step="0.0001"><br>
+
+    <label for="commission">Commission per Unit:</label>
+    <input id="commission" type="number" min="0" step="0.01"><br><br>
+
+    <button type="submit">Calculate</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    // Toggle dark/light mode
+    const themeCheckbox = document.getElementById('theme-checkbox');
+    themeCheckbox.addEventListener('change', () => {
+      document.documentElement.classList.toggle('dark-mode', themeCheckbox.checked);
+    });
+
+    // In-memory storage for printers
+    const printers = [];
+
+    // --- Printer Management ---
+    document.getElementById('printer-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nickname = document.getElementById('nickname').value;
+      const powerConsumption = parseFloat(document.getElementById('powerConsumption').value);
+      const printTimePerUnit = parseFloat(document.getElementById('printTimePerUnit').value);
+      const nozzleSize = parseFloat(document.getElementById('nozzleSize').value);
+      const bedCapacity = parseInt(document.getElementById('bedCapacity').value, 10);
+
+      printers.push({
+        nickname,
+        powerConsumption,
+        printTimePerUnit,
+        nozzleSize,
+        bedCapacity
+      });
+      alert(`Printer "${nickname}" added.`);
+      e.target.reset();
+    });
+
+    document.getElementById('list-printers-btn').addEventListener('click', () => {
+      if (printers.length === 0) {
+        document.getElementById('printers-list').textContent = 'No printers available.';
+      } else {
+        const listHtml = printers
+          .map(p => `• ${p.nickname} | ${p.powerConsumption} kW | ${p.printTimePerUnit} h/unit`)
+          .join('<br>');
+        document.getElementById('printers-list').innerHTML = listHtml;
+      }
+    });
+
+    // --- Calculation Logic ---
+    function calculateMaterialCost(totalUnits, materialPerUnit, materialCostPerKg, hasDiscount, discountRate) {
+      const totalMaterialKg = (totalUnits * materialPerUnit) / 1000;
+      const baseCost = totalMaterialKg * materialCostPerKg;
+      return hasDiscount ? baseCost * (1 - discountRate) : baseCost;
+    }
+
+    function optimizeDistribution(totalUnits, printerArray) {
+      // Sort printers by lowest power usage first
+      printerArray.sort((a, b) => a.powerConsumption - b.powerConsumption);
+
+      let distribution = {};
+      let remaining = totalUnits;
+      while (remaining > 0) {
+        for (let p of printerArray) {
+          if (remaining <= 0) break;
+          const assign = Math.min(remaining, p.bedCapacity);
+          distribution[p.nickname] = (distribution[p.nickname] || 0) + assign;
+          remaining -= assign;
+        }
+      }
+      return distribution;
+    }
+
+    function calculateEnergyCost(distribution, energyCostPerKwh) {
+      let total = 0;
+      for (const p of printers) {
+        const assigned = distribution[p.nickname] || 0;
+        const printerTime = assigned * p.printTimePerUnit;
+        total += printerTime * p.powerConsumption * energyCostPerKwh;
+      }
+      return total;
+    }
+
+    function calculateTotalCost(materialCost, energyCost) {
+      return materialCost + energyCost;
+    }
+
+    function calculateTotalCostWithCommission(totalCost, commissionPerUnit, totalUnits) {
+      return totalCost + commissionPerUnit * totalUnits;
+    }
+
+    // Main Calculation
+    document.getElementById('cost-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const totalUnits = parseInt(document.getElementById('units').value, 10);
+      const materialPerUnit = parseFloat(document.getElementById('matPerUnit').value);
+      const materialCostPerKg = parseFloat(document.getElementById('matCostPerKg').value);
+      const hasDiscount = document.getElementById('hasDiscount').checked;
+      const discountRate = parseFloat(document.getElementById('discountRate').value);
+      const energyCostPerKwh = parseFloat(document.getElementById('energyCost').value);
+      const commissionPerUnit = parseFloat(document.getElementById('commission').value);
+
+      if (!printers.length) {
+        document.getElementById('result').innerHTML = '<strong>No printers added yet.</strong>';
+        return;
+      }
+
+      // 1) Distribute units to printers
+      const distribution = optimizeDistribution(totalUnits, printers);
+
+      // 2) Calculate costs
+      const materialCost = calculateMaterialCost(
+        totalUnits, materialPerUnit, materialCostPerKg, hasDiscount, discountRate
+      );
+      const energyCost = calculateEnergyCost(distribution, energyCostPerKwh);
+      const totalCost = calculateTotalCost(materialCost, energyCost);
+      const totalWithCommission = calculateTotalCostWithCommission(totalCost, commissionPerUnit, totalUnits);
+
+      // 3) Display distribution and results
+      let distInfo = '';
+      Object.keys(distribution).forEach(nick => {
+        distInfo += `<li>${nick}: ${distribution[nick]} unit(s)</li>`;
+      });
+
+      document.getElementById('result').innerHTML = `
+        <hr>
+        <p><strong>Distribution:</strong></p>
+        <ul>${distInfo}</ul>
+        <p><strong>Material Cost:</strong> $${materialCost.toFixed(2)}</p>
+        <p><strong>Energy Cost:</strong> $${energyCost.toFixed(2)}</p>
+        <p><strong>Total Cost:</strong> $${totalCost.toFixed(2)}</p>
+        <p><strong>Total with Commission:</strong> $${totalWithCommission.toFixed(2)}</p>
+      `;
+    });
+  </script>
+</body>
+</html>
