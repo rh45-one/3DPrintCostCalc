@@ -34,7 +34,7 @@ document.getElementById('list-printers-btn').addEventListener('click', () => {
     document.getElementById('printers-list').textContent = 'No printers available.';
   } else {
     const listHtml = printers
-      .map(p => `• ${p.nickname} | ${p.powerConsumption} kW | ${p.printTimePerUnit} h/unit`)
+      .map(p => `• ${p.nickname} | ${p.powerConsumption} kW | ${p.printTimePerUnit} h/unit | ${p.nozzleSize} mm nozzle | ${p.bedCapacity} units`)
       .join('<br>');
     document.getElementById('printers-list').innerHTML = listHtml;
   }
