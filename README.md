@@ -1,4 +1,4 @@
-# 3D Printer-Cost-Calculator
+# 3D Print Cost Calculator
 
 ## Overview
 This Java CLI-based application helps estimate 3D printing costs by considering material usage, energy consumption, and optional commission. It allows users to set printing parameters, manage printers, calculate total costs, and export/import settings.
